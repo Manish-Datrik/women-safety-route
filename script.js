@@ -17,6 +17,32 @@ unsafeZone.bindPopup("High Risk Area 🚨");
 
 var routeLine;
 
+// Toast & loading helpers
+var toastContainer = document.getElementById('toastContainer');
+var loadingOverlay = document.getElementById('loadingOverlay');
+
+function showToast(message, opts) {
+    opts = opts || {};
+    var type = opts.type || 'success';
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + (type === 'danger' ? 'danger' : 'success');
+    toast.setAttribute('role','status');
+    toast.innerHTML = '<div class="icon">' + (type === 'danger' ? '🚨' : '✅') + '</div>' +
+        '<div class="body"><strong>' + (opts.title || '') + '</strong><div class="msg">' + message + '</div></div>';
+    toastContainer.appendChild(toast);
+
+    // auto dismiss
+    setTimeout(function(){
+        toast.classList.add('hide');
+        setTimeout(function(){ toast.remove(); }, 360);
+    }, opts.duration || 4000);
+}
+
+function showLoading(on) {
+    if (!loadingOverlay) return;
+    if (on) loadingOverlay.classList.remove('hidden'); else loadingOverlay.classList.add('hidden');
+}
+
 // Helper: geocode an address string using Nominatim
 function geocode(query) {
     if (!query) return Promise.reject('empty');
@@ -98,20 +124,22 @@ function findRoute() {
     var to = document.getElementById('toInput').value.trim();
 
     if (!from || !to) {
-        alert('Please enter both From and To locations (address or lat,lng).');
+        showToast('Please enter both From and To locations (address or lat,lng).', { type: 'danger', title: 'Input required' });
         return;
     }
-
+    showLoading(true);
     Promise.all([geocode(from), geocode(to)])
         .then(function(results){
             var s = [results[0].lat, results[0].lon];
             var d = [results[1].lat, results[1].lon];
             renderRoute(s, d);
+            showToast('Route calculated successfully.', { type: 'success' });
         })
         .catch(function(err){
             console.error(err);
-            alert('Could not find one or both locations. Try a different query.');
-        });
+            showToast('Could not find one or both locations. Try a different query.', { type: 'danger', title: 'Lookup failed' });
+        })
+        .finally(function(){ showLoading(false); });
 }
 
 // Backwards-compatible drawRoute still available (uses defaults)
@@ -149,12 +177,11 @@ function triggerSOS() {
             sosMarker.bindPopup("🚨 SOS Triggered! Help is on the way.").openPopup();
 
             map.setView(userLocation, 15);
-
-            alert("Emergency Alert Sent to Trusted Contacts!");
+                    showToast('Emergency Alert Sent Successfully. Trusted contacts notified.', { type: 'danger', title: 'Emergency' });
 
         });
 
     } else {
-        alert("Geolocation not supported");
+        showToast('Geolocation not supported on this device.', { type: 'danger', title: 'Geolocation' });
     }
 }
