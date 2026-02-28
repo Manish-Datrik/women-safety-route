@@ -17,15 +17,30 @@ unsafeZone.bindPopup("High Risk Area 🚨");
 
 var routeLine;
 
-// Draw Route Function
-function drawRoute() {
+// Helper: geocode an address string using Nominatim
+function geocode(query) {
+    if (!query) return Promise.reject('empty');
+    // If input looks like lat,lng use it directly
+    var coords = query.split(',').map(function(s){ return s.trim(); });
+    if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+        return Promise.resolve({ lat: parseFloat(coords[0]), lon: parseFloat(coords[1]) });
+    }
 
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query);
+    return fetch(url, { headers: { 'Accept': 'application/json' } })
+        .then(function(res){ return res.json(); })
+        .then(function(results){
+            if (results && results.length) {
+                return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
+            }
+            throw new Error('No results');
+        });
+}
+
+function renderRoute(source, destination) {
     if (routeLine) {
         map.removeLayer(routeLine);
     }
-
-    var source = [17.385044, 78.486671];
-    var destination = [17.395044, 78.496671];
 
     var hour = new Date().getHours();
     var risk = 0;
@@ -66,10 +81,44 @@ function drawRoute() {
     routeLine = L.polyline([source, destination], {
         color: routeColor,
         weight: routeWeight,
-        opacity: 0.9
+        opacity: 0.95,
+        dashArray: '6,4'
     }).addTo(map);
 
-    map.fitBounds(routeLine.getBounds());
+    // Add markers for clarity
+    L.circleMarker(source, { radius:6, color:'#2b8cbe', fillColor:'#2b8cbe', fillOpacity:1 }).addTo(map).bindPopup('Start');
+    L.circleMarker(destination, { radius:6, color:'#7b3294', fillColor:'#7b3294', fillOpacity:1 }).addTo(map).bindPopup('End');
+
+    map.fitBounds(routeLine.getBounds(), { padding: [40,40] });
+}
+
+// Public: invoked by UI
+function findRoute() {
+    var from = document.getElementById('fromInput').value.trim();
+    var to = document.getElementById('toInput').value.trim();
+
+    if (!from || !to) {
+        alert('Please enter both From and To locations (address or lat,lng).');
+        return;
+    }
+
+    Promise.all([geocode(from), geocode(to)])
+        .then(function(results){
+            var s = [results[0].lat, results[0].lon];
+            var d = [results[1].lat, results[1].lon];
+            renderRoute(s, d);
+        })
+        .catch(function(err){
+            console.error(err);
+            alert('Could not find one or both locations. Try a different query.');
+        });
+}
+
+// Backwards-compatible drawRoute still available (uses defaults)
+function drawRoute() {
+    var source = [17.385044, 78.486671];
+    var destination = [17.395044, 78.496671];
+    renderRoute(source, destination);
 }
 
 // Ensure intro disappears fully

@@ -1,38 +1,74 @@
-body {
-    font-family: Arial;
-    text-align: center;
-    margin: 0;
+:root{
+    --bg:#f6fbff;
+    --muted:#6b7280;
+    --accent-start:#2b8cbe;
+    --accent-end:#7b3294;
+    --danger:#ff4d4f;
+    --card:#ffffff;
 }
 
-.controls {
-    margin: 20px;
+*{box-sizing:border-box}
+body{
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin:0;
+    background: linear-gradient(180deg,var(--bg),#eef6fc);
+    color:#0f172a;
 }
 
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-    border: none;
-    background-color: #2196f3;
-    color: white;
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+.site-header{
+    display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(15,23,42,0.04);background:transparent
+}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{font-size:28px}
+.brand h1{font-size:18px;margin:0}
+.brand .tag{margin:0;font-size:12px;color:var(--muted)}
+
+.top-actions button{margin-left:8px}
+.top-actions .danger.small{background:var(--danger);color:white;padding:8px 12px;border-radius:8px;border:none}
+.top-actions .ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:8px}
+
+.layout{display:flex;gap:18px;padding:18px;align-items:flex-start}
+.panel{width:340px;flex:0 0 340px;background:var(--card);border-radius:12px;padding:18px;box-shadow:0 10px 30px rgba(11,45,87,0.06);border:1px solid rgba(11,45,87,0.04)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.panel-head h2{margin:0;font-size:16px}
+.badge.premium{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:white;padding:6px 8px;border-radius:8px;font-weight:600;font-size:12px}
+
+.form input{width:100%;padding:12px;border-radius:10px;border:1px solid #e6eef9;margin-bottom:10px;font-size:14px}
+.btn-row{display:flex;gap:10px}
+.primary{flex:1;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:white;padding:11px;border-radius:10px;border:none;cursor:pointer}
+.danger{background:var(--danger);color:white;padding:11px;border-radius:10px;border:none;cursor:pointer}
+
+.info-card{margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(11,45,87,0.03)}
+.info-card.small{padding:10px;font-size:13px}
+.info-card h3{margin:0 0 6px 0}
+
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.dot.safe{background:green}
+.dot.medium{background:orange}
+.dot.high{background:red}
+
+.panel-foot{margin-top:10px;color:var(--muted);font-size:13px}
+
+.map-area{flex:1;min-height:70vh}
+#map{height:72vh;width:100%;border-radius:12px;box-shadow:0 8px 30px rgba(11,45,87,0.08);border:1px solid rgba(11,45,87,0.04)}
+
+.leaflet-container{border-radius:12px}
+
+/* Small screens */
+@media (max-width:980px){
+    .layout{flex-direction:column;padding:12px}
+    .panel{width:auto;order:2}
+    .map-area{order:1}
+    #map{height:56vh}
 }
 
-#map {
-    height: 500px;
-    width: 90%;
-    margin: 20px auto;
-}
-
-#riskBox {
-    width: 300px;
-    margin: 15px auto;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: lightgreen;
-    transition: 0.3s;
-}
-
+/* Intro Screen */
+#introScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#0b1220);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1400;animation:fadeOut 1s ease 2.8s forwards}
+#introScreen h1{font-size:42px;margin:0 0 8px}
+#introScreen p{margin:0;color:rgba(255,255,255,0.85)}
+@keyframes fadeOut{to{opacity:0;visibility:hidden}}
 #legend {
     background: white;
     padding: 10px;
