@@ -19,39 +19,13 @@
     <p>Smart Route Planning for Women's Safety</p>
 </div>
 
-<header class="site-header">
-    <div class="brand">
-        <div class="logo">🚺</div>
-        <div>
-            <h1>SafePath</h1>
-            <p class="tag">Women Safety Route Planner</p>
-        </div>
-    </div>
-    <nav class="top-actions">
-        <button onclick="drawRoute()" class="ghost">Quick Demo</button>
-        <button onclick="triggerSOS()" class="danger small">SOS</button>
-    </nav>
-</header>
+<h2>Women Safety Smart Route Planner</h2>
 
-<main class="layout">
-    <aside class="panel" aria-labelledby="panelTitle">
-        <div class="panel-head">
-            <h2 id="panelTitle">Find a Safe Route</h2>
-            <div class="badge premium">Premium</div>
-        </div>
+<div class="controls">
+    <button onclick="drawRoute()">Find Safe Route</button>
+    <button onclick="triggerSOS()" style="background:red;">SOS</button>
 
-        <div class="form">
-            <label class="visually-hidden" for="fromInput">From</label>
-            <input id="fromInput" type="text" placeholder="From (address or lat,lng)" aria-label="From">
-
-            <label class="visually-hidden" for="toInput">To</label>
-            <input id="toInput" type="text" placeholder="To (address or lat,lng)" aria-label="To">
-
-            <div class="btn-row">
-                <button onclick="findRoute()" class="primary">Find Route</button>
-                <button onclick="triggerSOS()" class="danger">SOS</button>
-            </div>
-        </div>
+</div>
 
         <div id="riskBox" class="info-card">
             <h3>Safety Score: <span id="riskValue">0</span></h3>
